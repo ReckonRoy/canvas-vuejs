@@ -1,0 +1,89 @@
+<!doctype html>
+<html>
+<head>
+	<title>
+		Canvas and Vue
+	</title>
+	
+	<style>
+		#container
+		{
+			width: 100%;
+			height: 100vh;
+			border: 1px solid gray;
+		}
+		#canvas{
+			display: block;
+			width: 50%;
+			height: 50%;
+			border: 1px solid black;
+			margin: 0px auto;
+		}
+	</style>
+</head>
+<body>
+
+<div id="container">
+	<canvas id="canvas"></canvas>
+</div>
+
+<script type="text/javascript" src="script/vue.js"></script>
+<script type="text/javascript">
+var vue = new Vue({
+	el:"#container",
+	data: {
+	
+		vueCanvas: null,
+		canvasWidth: null,
+		canvasHeight: null,
+		lineHeight: null,
+	
+	}, 
+	
+	mounted(){
+	
+		var canvas = document.getElementById("canvas");
+		this.canvasWidth = canvas.width;
+		this.canvasHeight = canvas.height;
+		this.lineHeight = this.canvasHeight / 9;
+		var context = canvas.getContext("2d");
+		this.vueCanvas = context;
+		this.drawRect();
+	},
+	
+	methods: {
+		drawRect: function()
+		{
+			//clear canvas
+			this.vueCanvas.clearRect(0, 0, this.canvasWidth, this.canvasHeight);
+			
+			//draw rect
+			this.vueCanvas.fillStyle = "#000080";
+			this.vueCanvas.fillRect(0, 0, this.canvasWidth, this.canvasHeight);
+			this.vueCanvas.lineWidth = this.lineHeight;
+			this.vueCanvas.strokeStyle = "#ffffff";
+			
+			var offset = this.lineHeight / 2;
+			for(var i = 1; i < 8; i+=2)
+			{
+				this.vueCanvas.moveTo(0, i * this.lineHeight + offset);
+				this.vueCanvas.lineTo(this.canvasWidth, i * this.lineHeight + offset);
+			}
+			this.vueCanvas.stroke();
+			
+			this.vueCanvas.fillRect(0, 0, this.lineHeight * 5, this.lineHeight * 5);
+			this.vueCanvas.beginPath();
+			this.vueCanvas.moveTo(0, this.lineHeight * 2.5);
+			this.vueCanvas.lineTo(this.lineHeight * 5, this.lineHeight * 2.5);
+			this.vueCanvas.moveTo(this.lineHeight*2.5, 0);
+			this.vueCanvas.lineTo(this.lineHeight*2.5, this.lineHeight*5+1);
+			this.vueCanvas.stroke();
+			this.vueCanvas.closePath();
+			
+		}
+	}
+});
+
+</script>
+</body>
+</html>
