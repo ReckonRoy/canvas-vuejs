@@ -1,0 +1,60 @@
+<!doctype html>
+<html>
+<head>
+	<title>
+		Canvas and Vue
+	</title>
+	
+	<style>
+		
+	</style>
+</head>
+<body>
+
+<div id="container">
+	<mycomponent v-on:relay="content=arguments[0]"></mycomponent>
+	<div>sent message will be displayed here!!!!
+	<p>{{content}}</p></div>
+</div>
+
+
+
+<template id="template-id">
+	<div id="root">
+	<div><label>Message To Send</label><input type="text" placeholder="send message to send" v-model="message"></div>
+	<div><input type="button" value="Send Message" v-on:click="sendMessage"></div>
+	</div>
+</template>
+
+<script type="text/javascript" src="script/vue.js"></script>
+<script type="text/javascript" src="script/vue-router.js"></script>
+<script type="text/javascript">
+Vue.component("mycomponent", {
+	template: "#template-id",
+	data: function()
+	{
+		return {
+			message: "",
+		}
+	},
+	
+	methods: {
+		sendMessage: function()
+		{
+			this.$emit('relay', this.message);
+		}
+	}
+});
+
+var vue = new Vue({
+	el:"#container",
+	data: {
+	content: "",
+	},
+	methods: {
+	
+	},
+});
+</script>
+</body>
+</html>
