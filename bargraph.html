@@ -1,0 +1,95 @@
+<!doctype html>
+<html>
+<head>
+	<title>
+		Canvas and Vue
+	</title>
+	
+	<style>
+		#canvas
+		{
+			width: 550px;
+			height: 400px;
+		}
+	</style>
+</head>
+<body>
+
+<div id="container">
+	<canvas id="canvas"></canvas>
+</div>
+
+<script type="text/javascript" src="script/vue.js"></script>
+<script type="text/javascript" src="script/vue-router.js"></script>
+<script type="text/javascript">
+var vue = new Vue({
+	el:"#container",
+	data: {
+		width: 0,
+		height: 0,
+		cavasContext: null,
+		chart_padding:  20,
+		step_size: null,
+		elementWidth: null,
+		dataset: [
+		{label: "david", value: 3, style:"rgba(241, 178, 225, 0.5)"},
+		{label: "Ben", value: 2, style: "#B1DDF3"},
+		{label: "Oren", value: 9, style: "#FFDE89"},
+		{label: "Barbera", value: 6, style: "#E3675C"},
+		{label: "Belann", value: 10, style: "#C2D985"}],
+		chartYData: [
+		{label: "10 cats", value:1},
+		{label: "5 cats", value:.5},
+		{label: "3 cats", value:.3},
+		],
+		range: {min:0, max:10},
+	},
+	
+	
+	mounted()
+	{
+		var canvas = document.getElementById("canvas");
+		this.width = canvas.width;
+		this.height = canvas.height;
+		
+		
+		this.canvasContext = canvas.getContext("2d");
+		this.drawCanvas();
+	},
+	
+	methods: {
+		drawCanvas: function(){
+			this.canvasContext.fillStyle = "#fcfcfc";
+			this.canvasContext.strokeStyle = "#050000";
+			this.canvasContext.fillRect(0, 0, this.width, this.height);
+			
+			this.canvasContext.moveTo(this.chart_padding, this.chart_padding);
+			this.canvasContext.lineTo(this.chart_padding, this.height - this.chart_padding);
+			this.canvasContext.lineTo(this.width - this.chart_padding, this.height - this.chart_padding);
+			
+			this.step_size = (this.height - this.chart_padding * 2) / 10;
+			for(var i = 0; i < 10; i++)
+			{
+				this.canvasContext.moveTo(this.chart_padding, this.chart_padding + i * this.step_size);
+				this.canvasContext.lineTo(this.chart_padding * 1.3, this.chart_padding + i * this.step_size);
+				this.canvasContext.fillText(10 - i, this.chart_padding * 1.5, this.chart_padding + i * this.step_size + 6);
+			}
+			this.canvasContext.stroke();
+			this.elementWidth = (this.width - this.chart_padding * 2) / this.dataset.length;
+			this.canvasContext.textAlign = "center";
+			for(var i = 0; i < this.dataset.length; i++)
+			{
+				this.canvasContext.fillStyle = this.dataset[i].style;
+				this.canvasContext.fillRect(this.chart_padding + this.elementWidth * i,
+				this.height - this.chart_padding - this.dataset[i].value * this.step_size, this.elementWidth,
+				this.dataset[i].value * this.step_size);
+				this.canvasContext.fillStyle = "#050000";
+				this.canvasContext.font = 'normal 12px Helvetica, Arial, sans-serif';
+				this.canvasContext.fillText(this.dataset[i].label, this.chart_padding + this.elementWidth * (i + 0.5), this.height - this.chart_padding * 1.5);
+			}
+		},
+	},
+});
+</script>
+</body>
+</html>
