@@ -1,0 +1,124 @@
+<!doctype html>
+<html>
+<head>
+	<title>
+		Canvas and Vue - Piechart 
+	</title>
+	
+	<style>
+		#container
+		{
+			width: 100%;
+			height: 100%;
+			padding: 1px;
+			border: 1px solid black;
+		}
+	
+		#canvas
+		{
+			width: 50%;
+			height: 600px;
+			border: 1px solid red;
+			margin: 1px;
+		}
+	</style>
+</head>
+<body>
+
+<div id="container">
+	<canvas id="canvas"></canvas>
+</div>
+
+<script type="text/javascript" src="script/vue.js"></script>
+<script type="text/javascript" src="script/vue-router.js"></script>
+<script type="text/javascript">
+var vue = new Vue({
+	el:"#container",
+	data: {
+		canvasContext: null,
+		width: null,
+		height: null,
+		radius: 100,
+		copyStyle: "#0000000000",
+		dataSet: [
+			{label: "Asia", value: 3518000000, style:"#B1DDF3"},
+			{label: "Africa", value: 839000000, style:"#FFDE89"},
+			{label: "Europe", value:803000000, style:"#E3675C"},
+			{label: "Latin America and Caribbean", value: 5398000000, style:"#C2D985"},
+			{label: "North America", value: 320000000, style:"#eeeeee"},
+			{label: "Near East", value: 179000000, style:"#aaaaaa"},
+			{label: "Oceania", value: 32000000, style:"#444444"}
+		]
+	},
+	mounted(){
+		var canvas = document.getElementById("canvas");
+		this.width = canvas.width;
+		this.height = canvas.height;
+		this.canvasContext = canvas.getContext("2d");
+		this.drawCanvas();
+	},
+	methods: {
+		drawCanvas: function()
+		{
+			//count the total data(world population)
+			var total = 0;
+			for(var i = 0; i < this.dataSet.length; i++)
+			{
+				total += this.dataSet[i].value;
+			}
+			
+			//set up 360 degrees in radians and move our pivot point to 0.0
+			var rad360 = Math.PI * 2;
+			this.canvasContext.translate(this.width / 2, this.height / 2);
+			
+			//draw the piechart by using the following code snippet
+			var currentTotal = 0;
+			for( var i = 0; i < this.dataSet.length; i++)
+			{
+				this.canvasContext.beginPath();
+				this.canvasContext.moveTo(0, 0);
+				this.canvasContext.fillStyle = this.dataSet[i].style;
+				this.canvasContext.arc( 0, 0, this.radius, currentTotal / total * rad360,
+				(currentTotal + this.dataSet[i].value) / total * rad360, false);
+				this.canvasContext.lineTo(0, 0);
+				this.canvasContext.closePath();
+				this.canvasContext.fill();
+				
+				this.canvasContext.strokeStyle = this.canvasContext.fillStyle = this.copyStyle;
+				var midRadian = (currentTotal + this.dataSet[i].value / 2) / total * rad360;
+				
+				currentTotal += this.dataSet[i].value;
+				
+				this.canvasContext.beginPath();
+				this.canvasContext.moveTo(Math.cos(midRadian) * this.radius, Math.sin(midRadian) * this.radius);
+				this.canvasContext.lineTo(Math.cos(midRadian) * (this.radius + 20), Math.sin(midRadian) * (this.radius + 20));
+				this.canvasContext.stroke();
+				
+				this.canvasContext.fillText(this.formatToMillions(this.dataSet[i].value)
+				+ "(" + this.formatToPercent(this.dataSet[i].value/total) + ")",
+				Math.cos(midRadian) * (this.radius + 40), Math.sin(midRadian) * (this.radius + 40) + 12);
+				
+			}
+			
+		},
+		
+		formatToPercent: function(val)
+		{
+			val *= 10000;
+			val = parseInt(val);
+			val /= 100;
+			return val + "%";
+		},
+		
+		formatToMillions(val)
+		{
+			val /=1000000;
+			return val + "Million";
+		}
+		
+		
+	},
+});
+</script>
+</body>
+</html>

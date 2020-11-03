@@ -59,35 +59,65 @@ var vue = new Vue({
 	
 	methods: {
 		drawCanvas: function(){
-			this.canvasContext.fillStyle = "#fcfcfc";
+			this.canvasContext.fillStyle = "#eeeeee";
 			this.canvasContext.strokeStyle = "#050000";
 			this.canvasContext.fillRect(0, 0, this.width, this.height);
 			
 			this.canvasContext.moveTo(this.chart_padding, this.chart_padding);
 			this.canvasContext.lineTo(this.chart_padding, this.height - this.chart_padding);
 			this.canvasContext.lineTo(this.width - this.chart_padding, this.height - this.chart_padding);
+			//this.fillChart(this.canvasContext, this.chartYData);
+			this.createBars(this.canvasContext, this.dataset);
 			
 			this.step_size = (this.height - this.chart_padding * 2) / 10;
 			for(var i = 0; i < 10; i++)
 			{
 				this.canvasContext.moveTo(this.chart_padding, this.chart_padding + i * this.step_size);
 				this.canvasContext.lineTo(this.chart_padding * 1.3, this.chart_padding + i * this.step_size);
-				this.canvasContext.fillText(10 - i, this.chart_padding * 1.5, this.chart_padding + i * this.step_size + 6);
+				this.canvasContext.fillText(10 - i, 5 * 1.5, this.chart_padding + i * this.step_size + 6);
 			}
 			this.canvasContext.stroke();
-			this.elementWidth = (this.width - this.chart_padding * 2) / this.dataset.length;
-			this.canvasContext.textAlign = "center";
-			for(var i = 0; i < this.dataset.length; i++)
-			{
-				this.canvasContext.fillStyle = this.dataset[i].style;
-				this.canvasContext.fillRect(this.chart_padding + this.elementWidth * i,
-				this.height - this.chart_padding - this.dataset[i].value * this.step_size, this.elementWidth,
-				this.dataset[i].value * this.step_size);
-				this.canvasContext.fillStyle = "#050000";
-				this.canvasContext.font = 'normal 12px Helvetica, Arial, sans-serif';
-				this.canvasContext.fillText(this.dataset[i].label, this.chart_padding + this.elementWidth * (i + 0.5), this.height - this.chart_padding * 1.5);
-			}
+			
 		},
+		
+		fillChart: function(context, stepsData)
+		{
+			var steps = stepsData.length;
+			var startY = this.chart_padding;
+			var endY = this.height - this.chart_padding;
+			var chartHeight = endY - startY;
+			var currentY;
+			var rangeLength = this.range.max-this.range.min;
+			for(var i = 0; i < steps; i++){
+				currentY = startY + (1-(stepsData[i].value/rangeLength)) * chartHeight;
+				context.moveTo(this.chart_padding, currentY);
+				context.lineTo(this.chart_padding * 1.3, currentY);
+				context.fillText(stepsData[i].label, this.chart_padding * 1.5, currentY + 6);
+			}
+			
+			context.stroke();
+		}, 
+		createBars: function(context, data)
+		{
+			var elementWidth = (this.width - this.chart_padding * 2) / data.length;
+			var startY = this.chart_padding;
+			var endY = this.height - this.chart_padding;
+			var chartHeight = endY - startY;
+			var rangeLength = this.range.max - this.range.min;
+			var stepSize = chartHeight/rangeLength;
+			context.textAlign = "center";
+			for(i = 0; i < data.length; i++)
+			{
+				context.fillStyle = data[i].style;
+				context.fillRect(this.chart_padding + elementWidth * i,
+				this.height - this.chart_padding - data[i].value * stepSize,
+				elementWidth, data[i].value*stepSize);
+				context.fillStyle = "#04111a";
+				context.fillText(data[i].label, this.chart_padding + elementWidth*( i + .5), this.height - this.chart_padding * 1.5);
+			}
+			
+			
+		}
 	},
 });
 </script>

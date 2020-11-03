@@ -1,0 +1,67 @@
+<!doctype html>
+<html>
+<head>
+	<title>
+		Canvas and Vue
+	</title>
+	
+	<style>
+		
+	</style>
+</head>
+<body>
+
+<div id="container">
+	<canvas id="canvas"></canvas>
+</div>
+
+<script type="text/javascript" src="script/vue.js"></script>
+<script type="text/javascript" src="script/vue-router.js"></script>
+<script type="text/javascript">
+var vue = new Vue({
+	el:"#container",
+	data: {
+		ctx : null,
+		
+	},
+	mounted(){
+	var mycanvas = document.getElementById("canvas");
+	mycanvas.width = 300;
+	mycanvas.height = 300;
+	
+	this.ctx = mycanvas.getContext("2d");
+	this.drawLine(this.ctx, 100, 100, 200, 200);
+	this.drawArc(this.ctx, 150, 150, 150, 0, Math.PI/3);
+	this.drawPieSlice(this.ctx, 150, 150, 150, Math.PI/2, Math.PI/2 + Math.PI/4, '#ff0000');
+	
+	},
+	methods: {
+		drawLine: function(ctx, startX, startY, endX, endY)
+		{
+			ctx.beginPath();
+			ctx.moveTo(startX, startY);
+			ctx.lineTo(endX, endY);
+			ctx.stroke();
+		},
+		
+		drawArc: function(ctx, centerX, centerY, radius, startAngle, endAngle)
+		{
+			ctx.beginPath();
+			ctx.arc(centerX, centerY, radius, startAngle, endAngle);
+			ctx.stroke();
+		}, 
+		
+		drawPieSlice(ctx, centerX, centerY, radius, startAngle, endAngle, color)
+		{
+			ctx.fillStyle = color;
+			ctx.beginPath();
+			ctx.moveTo(centerX, centerY);
+			ctx.arc(centerX, centerY, radius, startAngle, endAngle);
+			ctx.closePath();
+			ctx.fill();
+		}
+	},
+});
+</script>
+</body>
+</html>
